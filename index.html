@@ -112,11 +112,61 @@
         }
 
         /* Statistics Dashboard Cards */
+        /* Statistics Dashboard Cards */
+        .stats-toggle-wrapper {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 9999px;
+            padding: 0.45rem 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            user-select: none;
+            outline: none;
+        }
+
+        .stats-toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .stats-toggle-btn .arrow-icon {
+            transition: transform 0.25s ease;
+        }
+
+        .stats-toggle-btn.active .arrow-icon {
+            transform: rotate(180deg);
+        }
+
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1rem;
+            margin-bottom: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin-bottom 0.3s ease;
+            pointer-events: none;
+        }
+
+        .stats-container.expanded {
+            max-height: 1000px;
+            opacity: 1;
             margin-bottom: 2rem;
+            pointer-events: auto;
         }
 
         .stats-card {
@@ -504,7 +554,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .card-header-left {
@@ -527,8 +577,14 @@
             text-transform: uppercase;
         }
 
-        .card-header-right {
-            text-align: right;
+        .card-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
         }
 
         .gisu-badge {
@@ -539,75 +595,60 @@
             padding: 0.15rem 0.45rem;
             border-radius: 0.35rem;
             display: inline-block;
-            margin-bottom: 0.2rem;
         }
 
         .grade-text {
             font-size: 0.75rem;
             color: var(--text-muted);
-            display: block;
         }
 
-        .contact-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            font-size: 0.8rem;
-        }
-
-        .phone-number {
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 0.02em;
+        /* Batch check buttons inside Card */
+        .batch-actions {
             display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
+            gap: 0.25rem;
+            margin-left: auto;
         }
 
-        .phone-number:hover {
-            color: var(--accent-color);
-            text-decoration: underline;
-        }
-
-        .phone-actions {
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .action-icon-btn {
-            background: rgba(255, 255, 255, 0.05);
+        .batch-btn {
+            background-color: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.25rem;
-            padding: 0.25rem 0.4rem;
-            color: var(--text-muted);
-            cursor: pointer;
+            border-radius: 0.35rem;
+            padding: 0.2rem 0.45rem;
             font-size: 0.7rem;
             font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
             transition: var(--transition-smooth);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 38px;
-            min-height: 24px;
+            user-select: none;
         }
 
-        .action-icon-btn:hover {
-            background-color: var(--accent-color);
+        .batch-btn:hover {
             color: white;
-            border-color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .batch-btn.dist:hover {
+            background-color: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--emerald-color);
+        }
+
+        .batch-btn.recv:hover {
+            background-color: var(--emerald-bg);
+            border-color: var(--emerald-border);
+            color: var(--emerald-color);
+        }
+
+        .batch-btn.reset:hover {
+            background-color: rgba(244, 63, 94, 0.1);
+            border-color: rgba(244, 63, 94, 0.2);
+            color: var(--rose-color);
         }
 
         .card-pieces {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.4rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 0.75rem;
         }
 
         .card-piece-item {
@@ -756,7 +797,7 @@
             display: grid;
         }
 
-        /* Copy Dialog Alert */
+        /* Copy Dialog Alert / Toast */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -773,6 +814,7 @@
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
             pointer-events: none;
+            white-space: nowrap;
         }
 
         .toast.show {
@@ -874,6 +916,21 @@
         .table-piece-cell.state-recv {
             background-color: rgba(16, 185, 129, 0.12);
         }
+
+        .table-batch-actions {
+            display: inline-flex;
+            gap: 0.2rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .table-batch-actions .batch-btn {
+            padding: 0.15rem 0.35rem;
+            font-size: 0.65rem;
+            border-radius: 0.25rem;
+            min-width: 24px;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="layout-card">
@@ -883,8 +940,17 @@
         <header>
             <div class="logo-badge">37th Concert Assignments</div>
             <h1>제37회 정기연주회 악보 배정 현황</h1>
-            <p>모바일 및 데스크톱 환경에 최적화된 오케스트라 파트원별 악보 배정 현황판</p>
         </header>
+
+        <!-- Stats Toggle Button -->
+        <div class="stats-toggle-wrapper">
+            <button id="stats-toggle-btn" class="stats-toggle-btn">
+                <span>통계 대시보드 보기</span>
+                <svg class="icon arrow-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+        </div>
 
         <!-- Stats Dashboard -->
         <div class="stats-container">
@@ -927,7 +993,7 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="text" id="search-input" class="search-input" placeholder="이름, 기수, 연락처, 학년으로 검색..." autocomplete="off">
+                    <input type="text" id="search-input" class="search-input" placeholder="이름, 기수, 학년으로 검색..." autocomplete="off">
                     <button id="clear-btn" class="clear-btn">&times;</button>
                 </div>
                 <button id="view-toggle-btn" class="view-toggle-btn">
@@ -983,7 +1049,7 @@
                         <th class="sticky-inst">악기</th>
                         <th>기수</th>
                         <th>학년</th>
-                        <th>연락처</th>
+                        <th>일괄 체크</th>
                         <!-- Dynamic piece headers will be injected here -->
                     </tr>
                 </thead>
@@ -995,84 +1061,84 @@
     </div>
 
     <!-- Copy Status Notification Toast -->
-    <div id="toast" class="toast">연락처가 복사되었습니다!</div>
+    <div id="toast" class="toast">체크 상태가 변경되었습니다.</div>
 
-    <!-- Embedded raw CSV data -->
-    <script id="csv-data" type="text/csv">기수,이름,연락처,악기,학년,나부코 서곡,플룻 협주곡,바이올린 협주곡,핀란디아,드보르작 9번,스타워즈,Love Wins All,
-51기,김동욱,010-4432-8923,1Vn,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,문성하,010-8451-2678,1Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,주은서,010-2867-4576,1Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,원희서,010-3449-1923,1Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-55기,박예서,010-8899-9466,1Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-55기,오리안,010-2312-8932,1Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,강민,010-7568-7581,1Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,김태율,010-8233-9820,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,이아람,010-4775-5693,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,하늘,010-4637-0514,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-51기,최홍준,010-5754-1525,2Vn,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,이지훈,010-4124-4811,2Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,고찬준,010-5400-4168,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,김유경,010-7557-8247,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-53기,김형래,010-6603-1388,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,신혜인,010-4080-5903,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,유한빈,010-4152-2898,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-53기,정한비,010-7722-1207,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-54기,김유진,010-8223-2497,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-54기,박한얼,010-2074-7939,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-54기,유재훈,010-9792-5992,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-54기,이현군,010-5651-7458,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-55기,유동균,010-3695-6337,2Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-55기,이현빈,010-9295-5482,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-56기,이영민,010-2553-8304,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,정다진,010-3002-9715,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-51기,박세준,010-2663-1680,Bsn,본과 3학년,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,배승준,010-6550-8040,Cb,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-54기,정재민,010-6523-5251,Cb,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,김서진,010-2400-6539,Cb,예과 1학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-56기,염건영,010-3022-7552,Cb,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-교수님,박성광,,Cb,OB,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,송예린,010-4479-8163,Cl,본과 1학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-54기,박하담,010-3838-2158,Cl,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-55기,양성현,010-9927-3375,Cl,예과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
-56기,김민결,010-7642-9887,Cl,예과 1학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
-교수님,최하영,,Cl,OB,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
-교수님,이승옥,,Cl,OB,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,이민주,010-6602-1974,Fl,본과 2학년,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,임채원,010-7255-1393,Fl,본과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
-52기,전은채,010-9938-0169,Fl,본과 2학년,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-53기,오민석,010-9440-7480,Fl,본과 1학년,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,정보경,010-3731-5539,Fl,본과 1학년,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-54기,최송이,010-8363-4389,Fl,예과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
-52기,최현,010-4143-8482,Hrn,본과 1학년,TRUE,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,
-52기,선현서,010-2304-2766,Ob,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,황준서,010-3355-7958,Ob,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,김주연,010-5248-9438,Ob,본과 1학년,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,
-51기,장건영,010-2284-3559,Tpt,군복무,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,
-52기,김근우,010-6278-7531,Tpt,군복무,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,
-56기,이채훈,010-2576-9440,Tpt,예과 1학년,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,
-선배님,전기엽,,Tpt,OB,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,
-52기,옥지윤,010-3299-7871,Va,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,국은한,010-4243-5411,Va,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,황세연,010-9346-4262,Va,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-54기,김서우,010-2227-4108,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-54기,유기범,010-9847-1877,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-55기,서지예,010-9078-8241,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-56기,장형진,010-2429-4886,Va,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-교수님,박승철,,Va,OB,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-51기,김청,010-2830-9638,Vc,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,강승훈,010-3787-1997,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,고은찬,010-5166-9402,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,박준서,010-2007-9466,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,이주현,010-2262-8042,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-52기,전수연,010-2139-7869,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,권희,010-2364-8649,Vc,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,이윤성,010-3470-7012,Vc,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
-53기,전승현,010-9414-2631,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-54기,유재민,010-8460-3329,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-55기,이우주,010-6382-5142,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
-56기,김하은,010-2993-5261,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-56기,박지성,010-7412-1420,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
-56기,표민준,010-4601-0823,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,</script>
+    <!-- Embedded raw CSV data (연락처 열 삭제 완료) -->
+    <script id="csv-data" type="text/csv">기수,이름,악기,학년,나부코 서곡,플룻 협주곡,바이올린 협주곡,핀란디아,드보르작 9번,스타워즈,Love Wins All,
+51기,김동욱,1Vn,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,문성하,1Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,주은서,1Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,원희서,1Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+55기,박예서,1Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+55기,오리안,1Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,강민,1Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,김태율,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,이아람,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,하늘,1Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+51기,최홍준,2Vn,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,이지훈,2Vn,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,고찬준,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,김유경,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+53기,김형래,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,신혜인,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,유한빈,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+53기,정한비,2Vn,본과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+54기,김유진,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+54기,박한얼,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+54기,유재훈,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+54기,이현군,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+55기,유동균,2Vn,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+55기,이현빈,2Vn,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+56기,이영민,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,정다진,2Vn,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+51기,박세준,Bsn,본과 3학년,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,배승준,Cb,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+54기,정재민,Cb,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,김서진,Cb,예과 1학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+56기,염건영,Cb,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+교수님,박성광,Cb,OB,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,송예린,Cl,본과 1학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+54기,박하담,Cl,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+55기,양성현,Cl,예과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
+56기,김민결,Cl,예과 1학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
+교수님,최하영,Cl,OB,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
+교수님,이승옥,Cl,OB,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,이민주,Fl,본과 2학년,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,임채원,Fl,본과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
+52기,전은채,Fl,본과 2학년,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+53기,오민석,Fl,본과 1학년,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,정보경,Fl,본과 1학년,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+54기,최송이,Fl,예과 2학년,TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,FALSE,
+52기,최현,Hrn,본과 1학년,TRUE,FALSE,FALSE,TRUE,TRUE,TRUE,TRUE,
+52기,선현서,Ob,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,황준서,Ob,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,김주연,Ob,본과 1학년,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,
+51기,장건영,Tpt,군복무,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,
+52기,김근우,Tpt,군복무,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,
+56기,이채훈,Tpt,예과 1학년,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,
+선배님,전기엽,Tpt,OB,FALSE,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,
+52기,옥지윤,Va,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,국은한,Va,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,황세연,Va,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+54기,김서우,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+54기,유기범,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+55기,서지예,Va,예과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+56기,장형진,Va,예과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+교수님,박승철,Va,OB,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+51기,김청,Vc,군복무,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,강승훈,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,고은찬,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,박준서,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,이주현,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+52기,전수연,Vc,본과 2학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,권희,Vc,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,이윤성,Vc,본과 1학년,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,
+53기,전승현,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+54기,유재민,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+55기,이우주,Vc,예과 2학년,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,TRUE,
+56기,김하은,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+56기,박지성,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
+56기,표민준,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,</script>
 
     <!-- JavaScript logic -->
     <script>
@@ -1157,6 +1223,62 @@
             });
         }
 
+        // Personal batch checking function
+        function batchCheckMember(name, inst, actionType) {
+            const member = parsedData.find(item => item.name === name && item.instrument === inst);
+            if (!member) return;
+
+            let targetState = { dist: false, recv: false };
+            let toastMsg = `${name}님의 체크가 해제되었습니다.`;
+            if (actionType === 'dist') {
+                targetState = { dist: true, recv: false };
+                toastMsg = `${name}님의 모든 악보가 [분배] 완료되었습니다.`;
+            } else if (actionType === 'recv') {
+                targetState = { dist: true, recv: true };
+                toastMsg = `${name}님의 모든 악보가 [수령] 완료되었습니다.`;
+            }
+
+            scoreHeaders.forEach(piece => {
+                if (member.pieces[piece]) {
+                    saveCheckState(name, inst, piece, targetState);
+                    
+                    const stateClass = targetState.recv ? 'state-recv' : (targetState.dist ? 'state-dist' : 'state-none');
+                    
+                    // Sync Card UI
+                    document.querySelectorAll(`.card-piece-item[data-name="${name}"][data-inst="${inst}"][data-piece="${piece}"]`).forEach(item => {
+                        item.className = `card-piece-item assigned ${stateClass}`;
+                        const distLabel = item.querySelector('.dist-label');
+                        if (distLabel) {
+                            distLabel.classList.toggle('checked', targetState.dist);
+                            distLabel.querySelector('.dist-cb').checked = targetState.dist;
+                        }
+                        const recvLabel = item.querySelector('.recv-label');
+                        if (recvLabel) {
+                            recvLabel.classList.toggle('checked', targetState.recv);
+                            recvLabel.querySelector('.recv-cb').checked = targetState.recv;
+                        }
+                    });
+
+                    // Sync Table UI
+                    document.querySelectorAll(`.table-piece-cell[data-name="${name}"][data-inst="${inst}"][data-piece="${piece}"]`).forEach(cell => {
+                        cell.className = `table-piece-cell ${stateClass}`;
+                        const distLabel = cell.querySelector('.dist-label');
+                        if (distLabel) {
+                            distLabel.classList.toggle('checked', targetState.dist);
+                            distLabel.querySelector('.dist-cb').checked = targetState.dist;
+                        }
+                        const recvLabel = cell.querySelector('.recv-label');
+                        if (recvLabel) {
+                            recvLabel.classList.toggle('checked', targetState.recv);
+                            recvLabel.querySelector('.recv-cb').checked = targetState.recv;
+                        }
+                    });
+                }
+            });
+
+            showToast(toastMsg);
+        }
+
         // DOM elements
         const listContainer = document.getElementById('list-container');
         const tableWrapper = document.getElementById('table-wrapper');
@@ -1223,6 +1345,7 @@
             setupEventListeners();
         }
 
+        // CSV Parser (연락처 열이 제외되었으므로 slice는 4로 시작)
         function parseCSV(text) {
             const lines = text.trim().split('\n');
             if (lines.length === 0) return { headers: [], data: [] };
@@ -1239,14 +1362,13 @@
                 const item = {
                     gisu: row[0] || '',
                     name: row[1] || '',
-                    phone: row[2] || '',
-                    instrument: row[3] || '',
-                    grade: row[4] || '',
+                    instrument: row[2] || '',
+                    grade: row[3] || '',
                     pieces: {}
                 };
 
-                // Pieces are from index 5 onwards matching headers
-                for (let j = 5; j < headers.length; j++) {
+                // Pieces are from index 4 onwards matching headers
+                for (let j = 4; j < headers.length; j++) {
                     const pieceName = headers[j];
                     const val = row[j] || 'FALSE';
                     item.pieces[pieceName] = val.toUpperCase() === 'TRUE';
@@ -1255,7 +1377,7 @@
             }
 
             return {
-                headers: headers.slice(5),
+                headers: headers.slice(4),
                 data: data
             };
         }
@@ -1369,16 +1491,15 @@
 
         function applyFiltersAndRender() {
             const filtered = parsedData.filter(item => {
-                // 1. Text Search Filter (Name, Contact, Grade, Generation)
+                // 1. Text Search Filter (Name, Grade, Generation) - 연락처 삭제됨
                 if (activeFilters.search) {
                     const query = activeFilters.search.toLowerCase();
                     const nameMatch = item.name.toLowerCase().includes(query);
-                    const phoneMatch = item.phone.replace(/-/g, '').includes(query.replace(/-/g, ''));
                     const gisuMatch = item.gisu.toLowerCase().includes(query);
                     const gradeMatch = item.grade.toLowerCase().includes(query);
                     const instMatch = item.instrument.toLowerCase().includes(query);
                     
-                    if (!nameMatch && !phoneMatch && !gisuMatch && !gradeMatch && !instMatch) {
+                    if (!nameMatch && !gisuMatch && !gradeMatch && !instMatch) {
                         return false;
                     }
                 }
@@ -1426,31 +1547,6 @@
                 const card = document.createElement('div');
                 card.className = 'member-card';
                 
-                // Contact row render helper
-                let contactRow = '';
-                if (item.phone) {
-                    contactRow = `
-                        <div class="contact-info">
-                            <a href="tel:${item.phone}" class="phone-number">
-                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 0.1rem;">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                                </svg>
-                                ${item.phone}
-                            </a>
-                            <div class="phone-actions">
-                                <button class="action-icon-btn" onclick="copyContact('${item.phone}')">복사</button>
-                                <a href="sms:${item.phone}" class="action-icon-btn" style="text-decoration:none;">문자</a>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    contactRow = `
-                        <div class="contact-info" style="color: var(--text-dim); justify-content: center; font-style: italic;">
-                            연락처 없음
-                        </div>
-                    `;
-                }
-
                 // Render assigned scores as badges
                 let piecesHTML = '';
                 scoreHeaders.forEach(piece => {
@@ -1494,13 +1590,18 @@
                                 <span class="member-name">${item.name}</span>
                                 <span class="instrument-badge" style="color: ${meta.color}; background-color: ${meta.bg}; border: 1px solid ${meta.border}">${item.instrument}</span>
                             </div>
-                            <div class="card-header-right">
-                                <span class="gisu-badge">${item.gisu}</span>
-                                <span class="grade-text">${item.grade || '&nbsp;'}</span>
-                            </div>
                         </div>
                         
-                        ${contactRow}
+                        <!-- Card Meta & Batch Actions Row -->
+                        <div class="card-meta-row">
+                            <span class="gisu-badge">${item.gisu}</span>
+                            <span class="grade-text">${item.grade || '&nbsp;'}</span>
+                            <div class="batch-actions">
+                                <button class="batch-btn dist" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'dist')" title="전체 분배">일괄 분배</button>
+                                <button class="batch-btn recv" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'recv')" title="전체 수령">일괄 수령</button>
+                                <button class="batch-btn reset" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'reset')" title="전체 초기화">해제</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-pieces">
@@ -1530,7 +1631,7 @@
                 const tr = document.createElement('tr');
                 const meta = instrumentMeta[item.instrument] || defaultMeta;
 
-                // Basic details
+                // Basic details + 일괄 처리 열 (연락처 열 대신 추가)
                 tr.innerHTML = `
                     <td class="sticky-name" style="font-weight: 700;">${item.name}</td>
                     <td class="sticky-inst">
@@ -1539,7 +1640,11 @@
                     <td>${item.gisu}</td>
                     <td>${item.grade}</td>
                     <td>
-                        ${item.phone ? `<a href="tel:${item.phone}" style="color: var(--text-main); text-decoration:none; font-weight:500;">${item.phone}</a>` : `<span style="color:var(--text-dim);">-</span>`}
+                        <div class="table-batch-actions">
+                            <button class="batch-btn dist" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'dist')" title="전체 분배">분</button>
+                            <button class="batch-btn recv" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'recv')" title="전체 수령">수</button>
+                            <button class="batch-btn reset" onclick="batchCheckMember('${item.name}', '${item.instrument}', 'reset')" title="전체 해제">✕</button>
+                        </div>
                     </td>
                 `;
 
@@ -1585,7 +1690,6 @@
                 document.body.classList.remove('layout-table');
                 document.body.classList.add('layout-card');
                 toggleBtnText.textContent = '목록 보기';
-                // Switch icon to list/table matrix
                 viewToggleBtn.innerHTML = `
                     <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -1597,7 +1701,6 @@
             } else {
                 document.body.classList.remove('layout-card');
                 document.body.classList.add('layout-table');
-                // Switch icon to cards grid
                 viewToggleBtn.innerHTML = `
                     <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7"></rect>
@@ -1610,16 +1713,9 @@
             }
         }
 
-        function copyContact(phone) {
-            navigator.clipboard.writeText(phone).then(() => {
-                showToast();
-            }).catch(err => {
-                console.error('클립보드 복사 실패: ', err);
-            });
-        }
-
-        function showToast() {
+        function showToast(msg) {
             const toast = document.getElementById('toast');
+            toast.textContent = msg;
             toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -1725,6 +1821,15 @@
             // Reset filter link listener
             resetFiltersBtn.addEventListener('click', () => {
                 resetAllFilters();
+            });
+
+            // Collapsible stats toggle
+            const statsToggleBtn = document.getElementById('stats-toggle-btn');
+            const statsContainer = document.querySelector('.stats-container');
+            statsToggleBtn.addEventListener('click', () => {
+                const isExpanded = statsContainer.classList.toggle('expanded');
+                statsToggleBtn.classList.toggle('active', isExpanded);
+                statsToggleBtn.querySelector('span').textContent = isExpanded ? '통계 대시보드 접기' : '통계 대시보드 보기';
             });
         }
     </script>
