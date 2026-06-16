@@ -1140,6 +1140,10 @@
 56기,박지성,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,
 56기,표민준,Vc,예과 1학년,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,</script>
 
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <!-- JavaScript logic -->
     <script>
         // Design colors map for instrument tags/badges
@@ -1159,6 +1163,21 @@
 
         const defaultMeta = { label: 'Unknown', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)', border: 'rgba(148, 163, 184, 0.2)' };
 
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCsB_fxaOhruETepbgq4l42bjMtWaBtCS0",
+            authDomain: "scores-37th.firebaseapp.com",
+            // Realtime Database의 URL입니다. 만약 다른 리전(예: 싱가포르)에 생성하셨다면
+            // "https://scores-37th-default-rtdb.asia-southeast1.firebasedatabase.app" 형태로 설정될 수 있으니
+            // 연결되지 않을 경우 Firebase 콘솔에서 확인 후 변경해 주세요.
+            databaseURL: "https://scores-37th-default-rtdb.firebaseio.com",
+            projectId: "scores-37th",
+            storageBucket: "scores-37th.firebasestorage.app",
+            messagingSenderId: "377407228264",
+            appId: "1:377407228264:web:b8933f896e1a3de6f0eedd",
+            measurementId: "G-5E6CXN2YRJ"
+        };
+
         // State variables
         let parsedData = [];
         let scoreHeaders = [];
@@ -1169,9 +1188,9 @@
         };
         let currentLayout = 'card'; // 'card' or 'table'
 
-        // Check state helpers (stored in localStorage and synced via WebSockets)
+        // Check state helpers (stored in localStorage and synced via Firebase)
         let clientStates = {};
-        let socket = null;
+        let database = null;
         let isConnected = false;
 
         function getCheckState(name, inst, piece) {
@@ -1201,15 +1220,11 @@
             saveCheckState(name, inst, piece, state);
             updateDOMState(name, inst, piece, state);
 
-            // Send via WebSocket to server
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'UPDATE_STATE',
-                    name,
-                    inst,
-                    piece,
-                    state
-                }));
+            // Send to Firebase Realtime Database
+            if (database) {
+                const key = `${name}_${inst}_${piece}`;
+                database.ref(`states/${key}`).set(state)
+                    .catch(err => console.error('Firebase write error:', err));
             }
         }
 
@@ -1266,82 +1281,63 @@
                 toastMsg = `${name}님의 모든 악보가 [수령] 완료되었습니다.`;
             }
 
-            const pieceUpdates = [];
+            const updates = {};
 
             scoreHeaders.forEach(piece => {
                 if (member.pieces[piece]) {
                     saveCheckState(name, inst, piece, targetState);
                     updateDOMState(name, inst, piece, targetState);
-                    pieceUpdates.push({ piece, state: targetState });
+                    const key = `${name}_${inst}_${piece}`;
+                    updates[`states/${key}`] = targetState;
                 }
             });
 
-            // Send via WebSocket to server
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({
-                    type: 'BATCH_UPDATE',
-                    name,
-                    inst,
-                    pieceStates: pieceUpdates
-                }));
+            // Send batch updates to Firebase
+            if (database) {
+                database.ref().update(updates)
+                    .catch(err => console.error('Firebase batch update error:', err));
             }
 
             showToast(toastMsg);
         }
 
-        // WebSocket connection manager
-        function connectWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const host = window.location.host || 'localhost:3000';
-            const wsUrl = `${protocol}//${host}`;
+        // Firebase connection and initialization
+        function initFirebase() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
 
-            console.log('Connecting to WebSocket:', wsUrl);
-            socket = new WebSocket(wsUrl);
-
-            socket.onopen = () => {
-                console.log('WebSocket connected.');
-                updateConnectionStatus(true);
-            };
-
-            socket.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    
-                    if (data.type === 'INIT') {
-                        clientStates = data.states;
-                        // Cache backup
-                        Object.keys(clientStates).forEach(key => {
-                            localStorage.setItem(`assign_37th_${key}`, JSON.stringify(clientStates[key]));
-                        });
-                        applyFiltersAndRender();
-                    } 
-                    else if (data.type === 'UPDATE_STATE') {
-                        const { name, inst, piece, state } = data;
-                        saveCheckState(name, inst, piece, state);
-                        updateDOMState(name, inst, piece, state);
-                    } 
-                    else if (data.type === 'BATCH_UPDATE') {
-                        const { name, inst, pieceStates } = data;
-                        pieceStates.forEach(({ piece, state }) => {
-                            saveCheckState(name, inst, piece, state);
-                            updateDOMState(name, inst, piece, state);
-                        });
+                // Monitor connection status
+                database.ref('.info/connected').on('value', (snap) => {
+                    if (snap.val() === true) {
+                        updateConnectionStatus(true);
+                    } else {
+                        updateConnectionStatus(false);
                     }
-                } catch (e) {
-                    console.error('Failed to parse WebSocket message:', e);
-                }
-            };
+                });
 
-            socket.onclose = () => {
-                console.warn('WebSocket connection closed. Reconnecting in 3s...');
+                // Listen for database changes
+                const statesRef = database.ref('states');
+                statesRef.on('value', (snapshot) => {
+                    const data = snapshot.val() || {};
+                    clientStates = data;
+
+                    // Update localStorage backup
+                    Object.keys(clientStates).forEach(key => {
+                        localStorage.setItem(`assign_37th_${key}`, JSON.stringify(clientStates[key]));
+                    });
+
+                    // Refresh UI rendering
+                    applyFiltersAndRender();
+                    updateDashboardStats();
+                }, (error) => {
+                    console.error('Firebase read error:', error);
+                    updateConnectionStatus(false);
+                });
+            } catch (err) {
+                console.error('Firebase initialization error:', err);
                 updateConnectionStatus(false);
-                setTimeout(connectWebSocket, 3000);
-            };
-
-            socket.onerror = (err) => {
-                console.error('WebSocket error:', err);
-                socket.close();
-            };
+            }
         }
 
         function updateConnectionStatus(connected) {
@@ -1427,8 +1423,8 @@
             // Set up event listeners
             setupEventListeners();
 
-            // Establish real-time connection
-            connectWebSocket();
+            // Establish Realtime connection
+            initFirebase();
         }
 
         // CSV Parser (연락처 열이 제외되었으므로 slice는 4로 시작)
