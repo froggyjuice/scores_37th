@@ -56,11 +56,11 @@ wss.on('connection', (socket) => {
     socket.on('message', (message) => {
         try {
             const data = JSON.parse(message);
-            
+
             if (data.type === 'UPDATE_STATE') {
                 const { name, inst, piece, state } = data;
                 const key = `${name}_${inst}_${piece}`;
-                
+
                 // Save to memory and JSON database
                 statesDb[key] = state;
                 saveDatabase();
@@ -73,10 +73,10 @@ wss.on('connection', (socket) => {
                     piece,
                     state
                 });
-            } 
+            }
             else if (data.type === 'BATCH_UPDATE') {
                 const { name, inst, pieceStates } = data;
-                
+
                 // Update multiple pieces in memory
                 pieceStates.forEach(({ piece, state }) => {
                     const key = `${name}_${inst}_${piece}`;
